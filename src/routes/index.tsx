@@ -1,43 +1,45 @@
+import SeriesCard from "@/components/SeriesCard";
+import TaskCard from "@/components/TaskCard";
 import { Button } from "@/components/ui/button";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import logo from "../logo.svg";
+import { createFileRoute } from "@tanstack/react-router";
+import { Plus } from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  component: App,
+	component: App,
 });
 
+function greeting(): string {
+	const currentHour = new Date().getHours();
+
+	if (currentHour >= 0 && currentHour < 12) {
+		return "Good morning";
+	} else if (currentHour >= 12 && currentHour < 18) {
+		return "Good afternoon";
+	}
+	return "Good evening";
+}
+
 function App() {
-  return (
-    <div className="text-center">
-      <header className="min-h-screen flex flex-col items-center justify-center bg-[#282c34] text-white text-[calc(10px+2vmin)]">
-        <img
-          src={logo}
-          className="h-[40vmin] pointer-events-none animate-[spin_20s_linear_infinite]"
-          alt="logo"
-        />
-        <Button>
-          <Link to="/home">Click me</Link>
-        </Button>
-        <p>
-          Edit <code>src/routes/index.tsx</code> and save to reload.
-        </p>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://tanstack.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn TanStack
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<>
+			<div className="mb-8 flex w-full justify-between">
+				<div>
+					<p className="text-2xl">{greeting()}</p>
+					<span className="flex gap-2">
+						<h1 className="text-4xl font-bold">Your</h1>
+						<p className="text-4xl">({4})</p>
+					</span>
+					<h1 className="text-4xl font-bold">TO-DOs</h1>
+				</div>
+				<div className="flex items-center">
+					<Button className="border-2 border-blue-400 bg-white text-blue-400">
+						<Plus /> New Task
+					</Button>
+				</div>
+			</div>
+			<SeriesCard />
+			<TaskCard title="ไปอาบน้ำ" note="ไปอาบน้ำได้แล้วววววว" />
+			<TaskCard title="ให้อาหารหมา" />
+		</>
+	);
 }
