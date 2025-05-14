@@ -1,33 +1,36 @@
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
-import { TodoContext } from "@/hooks/contexts";
-import { Checkbox } from "@radix-ui/react-checkbox";
-import { useContext } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import type { Todo } from "@/entities/todo";
+import { useEffect } from "react";
+import { useDebounceValue, useLocalStorage } from "usehooks-ts";
 
-export default function TaskCard(props: { title: string; note?: string }) {
-  const { setTodo } = useContext(TodoContext);
+export default function TaskCard(props: { todo: Todo }) {
+	const [_, setTodo] = useLocalStorage<Todo[]>("todos", []);
+	const [debouncedComplete, setComplete] = useDebounceValue(false, 3000);
 
+	useEffect(() => {
+		if (debouncedComplete === true) {
+			setTodo((prev: Todo[]) => {
+				return prev.filter((todo) => todo.id !== props.todo.id);
+			});
+		}
+	}, [debouncedComplete, setTodo, props.todo.id]);
 
 	return (
 		<Card className="my-4">
 			<CardContent className="flex justify-between">
 				<div>
-					<CardTitle>{props.title}</CardTitle>
-					<CardDescription className="mt-1">{props.note}</CardDescription>
+					<CardTitle>{props.todo.title}</CardTitle>
+					<CardDescription className="mt-1">{props.todo.note}</CardDescription>
 				</div>
-				<div>
-					<Checkbox onChange={(event) => {
-            event.preventDefault();
-            // Todo: add trottle
-            setTodo((prev) => {
-              return prev.map((todo) => {
-                if (todo.title === props.title) {
-                  todo.isCompleted = !todo.isCompleted;
-                }
-                return todo;
-              });
-            });
-          }} />
-				</div>
+				<Checkbox
+					id={`complete-${props.todo.id}`}
+					className="w-5 h-5 rounded-full border-black"
+					onClick={(event) => {
+						console.log("complete", event);
+						setComplete(true);
+					}}
+				/>
 			</CardContent>
 		</Card>
 	);

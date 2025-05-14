@@ -84,7 +84,7 @@ function App() {
 			) : (
 				todos.map((todo) => {
 					if (todo.type === TodoType.Task) {
-						return <TaskCard key={todo.id} title={todo.title} note={todo.note} />;
+						return <TaskCard key={todo.id} todo={todo} />;
 					} else {
 						return <SeriesCard key={todo.id} />;
 					}
