@@ -12,7 +12,7 @@ export default function TaskCard(props: { title: string; note?: string }) {
 			<CardContent className="flex justify-between">
 				<div>
 					<CardTitle>{props.title}</CardTitle>
-					<CardDescription>{props.note}</CardDescription>
+					<CardDescription className="mt-1">{props.note}</CardDescription>
 				</div>
 				<div>
 					<Checkbox onChange={(event) => {
