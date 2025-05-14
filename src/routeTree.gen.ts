@@ -8,12 +8,24 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 
+// Create Virtual Routes
+
+const NewTaskLazyImport = createFileRoute('/new-task')()
+
 // Create/Update Routes
+
+const NewTaskLazyRoute = NewTaskLazyImport.update({
+  id: '/new-task',
+  path: '/new-task',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/new-task.lazy').then((d) => d.Route))
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -32,6 +44,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/new-task': {
+      id: '/new-task'
+      path: '/new-task'
+      fullPath: '/new-task'
+      preLoaderRoute: typeof NewTaskLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,32 +58,37 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/new-task': typeof NewTaskLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/new-task': typeof NewTaskLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/new-task': typeof NewTaskLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/new-task'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/new-task'
+  id: '__root__' | '/' | '/new-task'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  NewTaskLazyRoute: typeof NewTaskLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  NewTaskLazyRoute: NewTaskLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +101,15 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/new-task"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/new-task": {
+      "filePath": "new-task.lazy.tsx"
     }
   }
 }

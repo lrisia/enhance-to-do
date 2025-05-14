@@ -9,10 +9,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { type Todo, TodoType } from "@/entities/todo";
-import { TodoContext } from "@/hooks/contexts";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowUpDown, Plus } from "lucide-react";
-import { useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
 
 export const Route = createFileRoute("/")({
 	component: App,
@@ -30,61 +29,67 @@ function greeting(): string {
 }
 
 function App() {
-	const [todos, setTodo] = useState<Todo[]>([
-		{
-      id: "1",
-			type: TodoType.Task,
-			title: "ไปอาบน้ำ",
-			note: "ไปอาบน้ำได้แล้ววววววว",
-			isCompleted: false,
-		},
-		{
-      id: "2",
-			type: TodoType.Series,
-			title: "ไปเที่ยว",
-			note: "ไปเที่ยวได้แล้ววววววว",
-			isCompleted: false,
-		},
+	const [todos] = useLocalStorage<Todo[]>("todos", [
+		// {
+		// 	id: "1",
+		// 	type: TodoType.Task,
+		// 	title: "ไปอาบน้ำ",
+		// 	note: "ไปอาบน้ำได้แล้ววววววว",
+		// 	isCompleted: false,
+		// },
+		// {
+		// 	id: "2",
+		// 	type: TodoType.Series,
+		// 	title: "ไปเที่ยว",
+		// 	note: "ไปเที่ยวได้แล้ววววววว",
+		// 	isCompleted: false,
+		// },
 	]);
 
 	return (
 		<>
-			<TodoContext.Provider value={{ todos, setTodo }}>
-				<div className="mb-8 flex w-full justify-between">
-					<div>
-						<p className="text-2xl">{greeting()}</p>
-						<span className="flex gap-2">
-							<h1 className="text-4xl font-bold">Your</h1>
-							<p className="text-4xl">({todos.length})</p>
-						</span>
-						<h1 className="text-4xl font-bold">TO-DOs</h1>
-					</div>
-					<div className="flex items-center">
+			<div className="mb-8 flex w-full justify-between">
+				<div>
+					<p className="text-2xl">{greeting()}</p>
+					<span className="flex gap-2">
+						<h1 className="text-4xl font-bold">Your</h1>
+						<p className="text-4xl">({todos.length})</p>
+					</span>
+					<h1 className="text-4xl font-bold">TO-DOs</h1>
+				</div>
+				<div className="flex items-center">
+					<Link to="/new-task">
 						<Button className="border-2 border-blue-400 bg-white text-blue-400">
 							<Plus /> New Task
 						</Button>
-					</div>
+					</Link>
 				</div>
-				<div className="mb-4 flex justify-start">
-					<Select>
-						<SelectTrigger>
-							<ArrowUpDown className="mr-2 h-4 w-4" />
-							<SelectValue placeholder="Sort by" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="decs">Descending</SelectItem>
-							<SelectItem value="asc">Ascending</SelectItem>
-						</SelectContent>
-					</Select>
-				</div>
-				{todos.map((todo) => {
+			</div>
+			<div className="mb-4 flex justify-start">
+				<Select>
+					<SelectTrigger>
+						<ArrowUpDown className="mr-2 h-4 w-4" />
+						<SelectValue placeholder="Sort by" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="decs">Descending</SelectItem>
+						<SelectItem value="asc">Ascending</SelectItem>
+					</SelectContent>
+				</Select>
+			</div>
+			{todos.length === 0 ? (
+				<div className="flex w-full justify-center mt-10 text-gray-500">
+          <span>Empty</span>
+        </div>
+			) : (
+				todos.map((todo) => {
 					if (todo.type === TodoType.Task) {
-						return <TaskCard title={todo.title} note={todo.note} />;
+						return <TaskCard key={todo.id} title={todo.title} note={todo.note} />;
 					} else {
-						return <SeriesCard />;
+						return <SeriesCard key={todo.id} />;
 					}
-				})}
-			</TodoContext.Provider>
+				})
+			)}
 		</>
 	);
 }
