@@ -9,10 +9,8 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { type Todo, TodoType } from "@/entities/todo";
-import { TodoContext } from "@/hooks/contexts";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowUpDown, Plus } from "lucide-react";
-import { useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 export const Route = createFileRoute("/")({
@@ -80,8 +78,8 @@ function App() {
 				</Select>
 			</div>
 			{todos.length === 0 ? (
-				<div className="flex h-full">
-          <p>Empty</p>
+				<div className="flex w-full justify-center mt-10 text-gray-500">
+          <span>Empty</span>
         </div>
 			) : (
 				todos.map((todo) => {

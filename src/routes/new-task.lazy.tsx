@@ -8,7 +8,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { TodoType, type Todo } from "@/entities/todo";
+import { type Todo, TodoType } from "@/entities/todo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { CirclePlus, CircleX } from "lucide-react";
@@ -34,7 +34,7 @@ function randomTitle(): string {
 }
 
 function RouteComponent() {
-	const [_, setValue] = useLocalStorage<Todo[]>('todos', [])
+	const [_, setValue] = useLocalStorage<Todo[]>("todos", []);
 	const id = useId();
 	const navigate = useNavigate();
 
@@ -57,7 +57,7 @@ function RouteComponent() {
 					isCompleted: false,
 				},
 			];
-		})
+		});
 		navigate({
 			to: "/",
 		});
@@ -89,6 +89,7 @@ function RouteComponent() {
 										<Input
 											className="rounded-4xl h-12 px-5"
 											placeholder={randomTitle()}
+											autoComplete="off"
 											{...field}
 										/>
 									</div>
@@ -105,7 +106,12 @@ function RouteComponent() {
 								<FormLabel className="text-gray-400">Note</FormLabel>
 								<FormControl>
 									<div className="flex gap-2">
-										<Input className="rounded-4xl h-12 px-5" placeholder="..." {...field} />
+										<Input
+											className="rounded-4xl h-12 px-5"
+											placeholder="..."
+											autoComplete="off"
+											{...field}
+										/>
 									</div>
 								</FormControl>
 								<FormMessage className="ml-2" />

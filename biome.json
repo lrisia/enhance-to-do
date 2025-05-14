@@ -28,6 +28,9 @@
 			"style": {
 				"useImportType": "warn",
 				"noUselessElse": "off"
+			},
+			"correctness": {
+				"noUnusedImports": "error"
 			}
 		}
 	},
