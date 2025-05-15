@@ -1,11 +1,12 @@
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { Todo } from "@/entities/todo";
-import { useEffect } from "react";
-import { useDebounceValue, useLocalStorage } from "usehooks-ts";
+import { TodoContext } from "@/hooks/contexts";
+import { useContext, useEffect } from "react";
+import { useDebounceValue } from "usehooks-ts";
 
 export default function TaskCard(props: { todo: Todo }) {
-	const [_, setTodo] = useLocalStorage<Todo[]>("todos", []);
+	const { setTodo } = useContext(TodoContext);
 	const [debouncedComplete, setComplete] = useDebounceValue(false, 3000);
 
 	useEffect(() => {
@@ -26,8 +27,7 @@ export default function TaskCard(props: { todo: Todo }) {
 				<Checkbox
 					id={`complete-${props.todo.id}`}
 					className="w-5 h-5 rounded-full border-black"
-					onClick={(event) => {
-						console.log("complete", event);
+					onClick={() => {
 						setComplete(true);
 					}}
 				/>

@@ -9,12 +9,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { type Todo, TodoType } from "@/entities/todo";
+import { TodoContext } from "@/hooks/contexts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { CirclePlus, CircleX } from "lucide-react";
-import { useId } from "react";
+import { useContext, useId } from "react";
 import { useForm } from "react-hook-form";
-import { useLocalStorage } from "usehooks-ts";
 import { z } from "zod";
 
 export const Route = createLazyFileRoute("/new-task")({
@@ -34,7 +34,7 @@ function randomTitle(): string {
 }
 
 function RouteComponent() {
-	const [_, setValue] = useLocalStorage<Todo[]>("todos", []);
+	const { setTodo } = useContext(TodoContext);
 	const id = useId();
 	const navigate = useNavigate();
 
@@ -42,18 +42,19 @@ function RouteComponent() {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			title: "",
+			note: "",
 		},
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		setValue((prev: Todo[]) => {
+		setTodo((prev: Todo[]) => {
 			return [
 				...prev,
 				{
 					id: id,
 					type: TodoType.Task,
 					title: values.title,
-					note: values.note,
+					note: values.note === "" ? undefined : values.note,
 					isCompleted: false,
 				},
 			];

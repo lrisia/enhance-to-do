@@ -8,10 +8,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { type Todo, TodoType } from "@/entities/todo";
+import { TodoType } from "@/entities/todo";
+import { TodoContext } from "@/hooks/contexts";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowUpDown, Plus } from "lucide-react";
-import { useLocalStorage } from "usehooks-ts";
+import { useContext } from "react";
 
 export const Route = createFileRoute("/")({
 	component: App,
@@ -29,22 +30,7 @@ function greeting(): string {
 }
 
 function App() {
-	const [todos] = useLocalStorage<Todo[]>("todos", [
-		// {
-		// 	id: "1",
-		// 	type: TodoType.Task,
-		// 	title: "ไปอาบน้ำ",
-		// 	note: "ไปอาบน้ำได้แล้ววววววว",
-		// 	isCompleted: false,
-		// },
-		// {
-		// 	id: "2",
-		// 	type: TodoType.Series,
-		// 	title: "ไปเที่ยว",
-		// 	note: "ไปเที่ยวได้แล้ววววววว",
-		// 	isCompleted: false,
-		// },
-	]);
+	const { todos } = useContext(TodoContext)
 
 	return (
 		<>
