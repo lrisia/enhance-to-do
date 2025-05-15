@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 import { z } from "zod";
 
-export const Route = createLazyFileRoute("/new-task")({
+export const Route = createLazyFileRoute("/task/create")({
 	component: RouteComponent,
 });
 
@@ -42,6 +42,7 @@ function RouteComponent() {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			title: "",
+			note: "",
 		},
 	});
 
@@ -53,7 +54,7 @@ function RouteComponent() {
 					id: id,
 					type: TodoType.Task,
 					title: values.title,
-					note: values.note,
+					note: values.note === "" ? undefined : values.note,
 					isCompleted: false,
 				},
 			];
@@ -65,7 +66,7 @@ function RouteComponent() {
 
 	return (
 		<>
-			<Link to="..">
+			<Link to="/">
 				<CircleX strokeWidth={1} size={50} />
 			</Link>
 			<h1 className="text-4xl font-bold my-2">NEW TASK</h1>
@@ -108,7 +109,7 @@ function RouteComponent() {
 									<div className="flex gap-2">
 										<Input
 											className="rounded-4xl h-12 px-5"
-											placeholder="..."
+											placeholder="Note (Optional)"
 											autoComplete="off"
 											{...field}
 										/>
