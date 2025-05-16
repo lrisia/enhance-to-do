@@ -60,7 +60,6 @@ export default function TaskCard(props: { todo: Todo }) {
 									}}
 								/>
 								<input
-									name="note"
 									className="text-muted-foreground text-sm mt-0.5 focus:outline-hidden"
 									placeholder="Note (Optional)"
 									autoComplete="off"
