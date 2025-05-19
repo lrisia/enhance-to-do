@@ -6,21 +6,21 @@ import { Check, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDebounceValue, useLocalStorage } from "usehooks-ts";
 
-export default function TaskCard(props: { todo: Task }) {
+export default function TaskCard(props: { task: Task }) {
 	const [_, setTodo] = useLocalStorage<Todo[]>("todos", []);
 	const [editMode, setEditMode] = useState(false);
-	const [title, setTitle] = useState(props.todo.title);
+	const [title, setTitle] = useState(props.task.title);
 	const [titleError, setTitleError] = useState<string | undefined>();
-	const [note, setNote] = useState(props.todo.note);
+	const [note, setNote] = useState(props.task.note);
 	const [debouncedComplete, setComplete] = useDebounceValue(false, 3000);
 
 	useEffect(() => {
 		if (debouncedComplete === true) {
 			setTodo((prev: Todo[]) => {
-				return prev.filter((todo) => todo.id !== props.todo.id);
+				return prev.filter((todo) => todo.id !== props.task.id);
 			});
 		}
-	}, [debouncedComplete, setTodo, props.todo.id]);
+	}, [debouncedComplete, setTodo, props.task.id]);
 
 	return (
 		<Card className="my-4">
@@ -36,7 +36,7 @@ export default function TaskCard(props: { todo: Task }) {
 
 								setTodo((prev: Todo[]) => {
 									return prev.map((todo) => {
-										if (todo.id === props.todo.id) {
+										if (todo.id === props.task.id) {
 											return {
 												...todo,
 												title: title,
@@ -103,7 +103,7 @@ export default function TaskCard(props: { todo: Task }) {
 					)}
 				</div>
 				<Checkbox
-					id={`complete-${props.todo.id}`}
+					id={`complete-${props.task.id}`}
 					className="w-5 h-5 rounded-full border-black"
 					onClick={() => {
 						setComplete(true);

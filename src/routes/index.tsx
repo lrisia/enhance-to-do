@@ -69,18 +69,20 @@ function App() {
 			) : (
 				todos.map((todo) => {
 					if (todo.type === TodoType.Task && todo.seriesId === undefined) {
-						return <TaskCard key={todo.id} todo={todo} />;
+						return <TaskCard key={todo.id} task={todo} />;
 					} else if (todo.type === TodoType.Series) {
 						return (
-							<SeriesCard
-								key={todo.id}
-								series={todo}
-								tasks={
-									todos.filter(
-										(task) => task.type === TodoType.Task && task.seriesId === todo.id,
-									) as Task[]
-								}
-							/>
+							<Link to="/series/$seriesId" params={{ seriesId: todo.id }}>
+								<SeriesCard
+									key={todo.id}
+									series={todo}
+									tasks={
+										todos.filter(
+											(task) => task.type === TodoType.Task && task.seriesId === todo.id,
+										) as Task[]
+									}
+								/>
+							</Link>
 						);
 					}
 				})
