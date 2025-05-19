@@ -1,3 +1,4 @@
+import SeriesCard from "@/components/SeriesCard";
 import TaskCard from "@/components/TaskCard";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,7 +8,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { type Todo, TodoType } from "@/entities/todo";
+import { type Task, type Todo, TodoType } from "@/entities/todo";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowUpDown, Plus } from "lucide-react";
 import { useLocalStorage } from "usehooks-ts";
@@ -28,22 +29,7 @@ function greeting(): string {
 }
 
 function App() {
-	const [todos] = useLocalStorage<Todo[]>("todos", [
-		// {
-		// 	id: "1",
-		// 	type: TodoType.Task,
-		// 	title: "ไปอาบน้ำ",
-		// 	note: "ไปอาบน้ำได้แล้ววววววว",
-		// 	isCompleted: false,
-		// },
-		// {
-		// 	id: "2",
-		// 	type: TodoType.Series,
-		// 	title: "ไปเที่ยว",
-		// 	note: "ไปเที่ยวได้แล้ววววววว",
-		// 	isCompleted: false,
-		// },
-	]);
+	const [todos] = useLocalStorage<Todo[]>("todos", []);
 
 	return (
 		<>
@@ -82,10 +68,20 @@ function App() {
 				</div>
 			) : (
 				todos.map((todo) => {
-					if (todo.type === TodoType.Task) {
+					if (todo.type === TodoType.Task && todo.seriesId === undefined) {
 						return <TaskCard key={todo.id} todo={todo} />;
-					} else {
-						// return <SeriesCard key={todo.id} />;
+					} else if (todo.type === TodoType.Series) {
+						return (
+							<SeriesCard
+								key={todo.id}
+								series={todo}
+								tasks={
+									todos.filter(
+										(task) => task.type === TodoType.Task && task.seriesId === todo.id,
+									) as Task[]
+								}
+							/>
+						);
 					}
 				})
 			)}

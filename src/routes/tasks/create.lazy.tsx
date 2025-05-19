@@ -35,14 +35,29 @@ function randomTitle(): string {
 	return titles[Math.floor(Math.random() * titles.length)];
 }
 
-const title = randomTitle();
+function randomSeriesTitle(): string {
+	const titles = [
+		"Holidays in Norway",
+		"Weekend Projects",
+		"Study Goals",
+		"Fitness Journey",
+		"Home Renovation",
+		"Travel Plans",
+		"Reading List",
+		"Work Tasks",
+	];
+	return titles[Math.floor(Math.random() * titles.length)];
+}
 
 function RouteComponent() {
 	const [_, setValue] = useLocalStorage<Todo[]>("todos", []);
-	const id = useId();
+	const taskId = useId();
+	const seriesId = useId();
 	const navigate = useNavigate();
+	const [title, __] = useState(randomTitle());
 	const [createSeries, setCreateSeries] = useState(false);
 	const [siriesColor, setSeriesColor] = useState(DefaultSeriesColor);
+	const [seriesTitle, setSeriesTitle] = useState(randomSeriesTitle());
 
 	const taskForm = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -53,16 +68,34 @@ function RouteComponent() {
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
+		if (createSeries === true) {
+			// Create series
+			setValue((prev: Todo[]) => {
+				return [
+					...prev,
+					{
+						id: seriesId,
+						type: TodoType.Series,
+						title: seriesTitle,
+						isCompleted: false,
+						createdAt: new Date(),
+						color: siriesColor,
+					},
+				];
+			});
+		}
+
 		setValue((prev: Todo[]) => {
 			return [
 				...prev,
 				{
-					id: id,
+					id: taskId,
 					type: TodoType.Task,
 					title: values.title,
 					note: values.note === "" ? undefined : values.note,
 					isCompleted: false,
 					createdAt: new Date(),
+					seriesId: createSeries ? seriesId : undefined,
 				},
 			];
 		});
@@ -95,7 +128,7 @@ function RouteComponent() {
 				{createSeries && (
 					<>
 						<p className="mb-2 text-gray-400 font-bold text-xs">COLOR</p>
-						<div className="flex bg-gray-100 rounded-full p-2 w-min gap-2">
+						<div className="flex bg-gray-100 rounded-full p-2 w-min gap-2 mb-4">
 							{Object.entries(SeriesColor).map(([color, code]) => (
 								<div
 									key={color}
@@ -107,7 +140,20 @@ function RouteComponent() {
 								/>
 							))}
 						</div>
-						<PreviewSeriesCard color={siriesColor} />
+						<p className="mb-2 text-gray-400 font-bold text-xs">SERIES TITLE</p>
+						<Input
+							className="rounded-4xl h-12 px-5"
+							placeholder={seriesTitle}
+							autoComplete="off"
+							onChange={(event) => {
+								if (event.target.value.length === 0) {
+									setSeriesTitle(seriesTitle);
+								} else {
+									setSeriesTitle(event.target.value);
+								}
+							}}
+						/>
+						<PreviewSeriesCard color={siriesColor} title={seriesTitle} />
 					</>
 				)}
 			</div>
@@ -161,7 +207,7 @@ function RouteComponent() {
 					</div>
 				</form>
 			</Form>
-			<div className="h-10"/>
+			<div className="h-10" />
 		</>
 	);
 }
