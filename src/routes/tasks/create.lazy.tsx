@@ -1,3 +1,4 @@
+import SeriesCard from "@/components/SeriesCard";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -9,10 +10,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { type Todo, TodoType } from "@/entities/todo";
+import { DefaultSeriesColor, SeriesColor } from "@/lib/constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { CirclePlus, CircleX } from "lucide-react";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 import { z } from "zod";
@@ -33,10 +35,14 @@ function randomTitle(): string {
 	return titles[Math.floor(Math.random() * titles.length)];
 }
 
+const title = randomTitle();
+
 function RouteComponent() {
 	const [_, setValue] = useLocalStorage<Todo[]>("todos", []);
 	const id = useId();
 	const navigate = useNavigate();
+	const [createSeries, setCreateSeries] = useState(false);
+	const [siriesColor, setSeriesColor] = useState(DefaultSeriesColor);
 
 	const taskForm = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -56,6 +62,7 @@ function RouteComponent() {
 					title: values.title,
 					note: values.note === "" ? undefined : values.note,
 					isCompleted: false,
+					createdAt: new Date(),
 				},
 			];
 		});
@@ -72,9 +79,37 @@ function RouteComponent() {
 			<h1 className="text-4xl font-bold my-2">NEW TASK</h1>
 			<p className="mb-2 mt-6 text-gray-400 font-bold">SERIES</p>
 			<div>
-				<Link to=".">
-					<CirclePlus strokeWidth={1} size={40} />
-				</Link>
+				<button
+					type="button"
+					onClick={() => {
+						setCreateSeries(!createSeries);
+						setSeriesColor(DefaultSeriesColor);
+					}}
+				>
+					<CirclePlus
+						strokeWidth={1}
+						size={40}
+						className={`transition-transform ${createSeries ? "rotate-z-45" : ""}`}
+					/>
+				</button>
+				{createSeries && (
+					<>
+						<p className="mb-2 text-gray-400 font-bold text-xs">COLOR</p>
+						<div className="flex bg-gray-100 rounded-full p-2 w-min gap-2">
+							{Object.entries(SeriesColor).map(([color, code]) => (
+								<div
+									key={color}
+									style={{ backgroundColor: code }}
+									className={`rounded-full w-8 h-8 cursor-pointer transition-transform hover:scale-110 ${siriesColor === code ? "ring-2 ring-gray-400" : ""}`}
+									onClick={() => {
+										setSeriesColor(code);
+									}}
+								/>
+							))}
+						</div>
+						<SeriesCard />
+					</>
+				)}
 			</div>
 			<p className="mb-2 mt-6 text-gray-400 font-bold">TASK</p>
 			<Form {...taskForm}>
@@ -89,7 +124,7 @@ function RouteComponent() {
 									<div className="flex gap-2">
 										<Input
 											className="rounded-4xl h-12 px-5"
-											placeholder={randomTitle()}
+											placeholder={title}
 											autoComplete="off"
 											{...field}
 										/>

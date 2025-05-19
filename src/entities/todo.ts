@@ -11,6 +11,7 @@ export type Task = {
   title: string;
   note?: string;
   isCompleted: boolean;
+  createdAt: Date;
 };
 
 export type Series = {
@@ -18,5 +19,7 @@ export type Series = {
   type: TodoType.Series;
   title: string;
   note?: string;
+  tasks: Task[];
   isCompleted: boolean;
+  createdAt: Date;
 };
