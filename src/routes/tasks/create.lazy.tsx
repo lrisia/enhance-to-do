@@ -1,4 +1,4 @@
-import SeriesCard from "@/components/SeriesCard";
+import PreviewSeriesCard from "@/components/PreviewSeriesCard";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -107,7 +107,7 @@ function RouteComponent() {
 								/>
 							))}
 						</div>
-						<SeriesCard />
+						<PreviewSeriesCard color={siriesColor} />
 					</>
 				)}
 			</div>
@@ -161,6 +161,7 @@ function RouteComponent() {
 					</div>
 				</form>
 			</Form>
+			<div className="h-10"/>
 		</>
 	);
 }

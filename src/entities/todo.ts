@@ -1,3 +1,5 @@
+import type { SeriesColor } from "@/lib/constant";
+
 export enum TodoType {
   Task = "task",
   Series = "series",
@@ -19,6 +21,7 @@ export type Series = {
   type: TodoType.Series;
   title: string;
   note?: string;
+  color: SeriesColor
   tasks: Task[];
   isCompleted: boolean;
   createdAt: Date;
