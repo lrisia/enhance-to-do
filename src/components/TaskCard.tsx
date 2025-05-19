@@ -67,7 +67,11 @@ export default function TaskCard(props: { todo: Todo }) {
 										setTitle(event.target.value);
 									}}
 								/>
-								{titleError !== undefined ? <p className="flex text-red-500 text-sm">{titleError}</p> : <></>}
+								{titleError !== undefined ? (
+									<p className="flex text-red-500 text-sm">{titleError}</p>
+								) : (
+									<></>
+								)}
 								<input
 									className="text-muted-foreground text-sm mt-0.5 focus:outline-hidden"
 									placeholder="Note (Optional)"

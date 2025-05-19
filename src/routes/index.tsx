@@ -1,4 +1,3 @@
-import SeriesCard from "@/components/SeriesCard";
 import TaskCard from "@/components/TaskCard";
 import { Button } from "@/components/ui/button";
 import {
@@ -79,14 +78,14 @@ function App() {
 			</div>
 			{todos.length === 0 ? (
 				<div className="flex w-full justify-center mt-10 text-gray-500">
-          <span>Empty</span>
-        </div>
+					<span>Empty</span>
+				</div>
 			) : (
 				todos.map((todo) => {
 					if (todo.type === TodoType.Task) {
 						return <TaskCard key={todo.id} todo={todo} />;
 					} else {
-						return <SeriesCard key={todo.id} />;
+						// return <SeriesCard key={todo.id} />;
 					}
 				})
 			)}
