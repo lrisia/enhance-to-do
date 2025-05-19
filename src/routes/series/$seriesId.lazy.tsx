@@ -1,7 +1,7 @@
 import SeriesCard from "@/components/SeriesCard";
 import TaskCard from "@/components/TaskCard";
 import { type Series, type Task, type Todo, TodoType } from "@/entities/todo";
-import { Link, createLazyFileRoute } from "@tanstack/react-router";
+import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { CircleChevronLeft, CirclePlus, Trash2 } from "lucide-react";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -11,6 +11,7 @@ export const Route = createLazyFileRoute("/series/$seriesId")({
 
 function RouteComponent() {
 	const { seriesId } = Route.useParams();
+	const navigate = useNavigate();
 	if (!seriesId) {
 		throw new Error("seriesId is required");
 	}
@@ -25,22 +26,28 @@ function RouteComponent() {
 		(task) => task.type === TodoType.Task && task.seriesId === seriesId,
 	) as Task[];
 
-  function onDeleteSeries() {
-    
-  }
+	function onDeleteSeries() {
+		const deleteId = [seriesId, ...tasks.map((task) => task.id)];
+		setTodo((prev: Todo[]) => {
+			return prev.filter((todo) => !deleteId.includes(todo.id));
+		});
+		navigate({
+			to: "/",
+		});
+	}
 
 	return (
 		<>
-    <div className="flex justify-between">
-			<Link to="/">
-				<CircleChevronLeft strokeWidth={1} size={50} />
-			</Link>
-      <button type="button" className="mr-2">
-        <Trash2 strokeWidth={2} size={35} color="#cc0202" />
-      </button>
-    </div>
+			<div className="flex justify-between">
+				<Link to="/">
+					<CircleChevronLeft strokeWidth={1} size={50} />
+				</Link>
+				<button type="button" className="mr-2" onClick={onDeleteSeries}>
+					<Trash2 strokeWidth={2} size={35} color="#cc0202" />
+				</button>
+			</div>
 			<SeriesCard series={series} tasks={tasks} />
-			<div className="relative -top-10 flex justify-center -mb-6">
+			<div className="relative -top-10 flex justify-center -mb-7">
 				<button
 					type="button"
 					className="rounded-full p-2"
@@ -50,9 +57,15 @@ function RouteComponent() {
 				</button>
 			</div>
 			<p className="mb-2 text-gray-400 font-bold">SERIES</p>
-			{tasks.map((task) => {
-				return <TaskCard key={task.id} task={task} />;
-			})}
+			{tasks.length === 0 ? (
+				<div className="flex w-full justify-center mt-4 text-gray-500">
+					<span>Empty</span>
+				</div>
+			) : (
+				tasks.map((task) => {
+					return <TaskCard key={task.id} task={task} />;
+				})
+			)}
 		</>
 	);
 }
