@@ -58,7 +58,7 @@ function App() {
 					<h1 className="text-4xl font-bold">TO-DOs</h1>
 				</div>
 				<div className="flex items-center">
-					<Link to="/task/create">
+					<Link to="/tasks/create">
 						<Button className="border-2 border-blue-400 bg-white text-blue-400">
 							<Plus /> New Task
 						</Button>

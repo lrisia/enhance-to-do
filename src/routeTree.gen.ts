@@ -17,8 +17,8 @@ import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
 
-const TaskCreateLazyImport = createFileRoute('/task/create')()
-const TaskEditTaskIdLazyImport = createFileRoute('/task/edit/$taskId')()
+const TasksCreateLazyImport = createFileRoute('/tasks/create')()
+const TasksEditTaskIdLazyImport = createFileRoute('/tasks/edit/$taskId')()
 
 // Create/Update Routes
 
@@ -28,18 +28,18 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const TaskCreateLazyRoute = TaskCreateLazyImport.update({
-  id: '/task/create',
-  path: '/task/create',
+const TasksCreateLazyRoute = TasksCreateLazyImport.update({
+  id: '/tasks/create',
+  path: '/tasks/create',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/task.create.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/tasks/create.lazy').then((d) => d.Route))
 
-const TaskEditTaskIdLazyRoute = TaskEditTaskIdLazyImport.update({
-  id: '/task/edit/$taskId',
-  path: '/task/edit/$taskId',
+const TasksEditTaskIdLazyRoute = TasksEditTaskIdLazyImport.update({
+  id: '/tasks/edit/$taskId',
+  path: '/tasks/edit/$taskId',
   getParentRoute: () => rootRoute,
 } as any).lazy(() =>
-  import('./routes/task.edit.$taskId.lazy').then((d) => d.Route),
+  import('./routes/tasks/edit.$taskId.lazy').then((d) => d.Route),
 )
 
 // Populate the FileRoutesByPath interface
@@ -53,18 +53,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/task/create': {
-      id: '/task/create'
-      path: '/task/create'
-      fullPath: '/task/create'
-      preLoaderRoute: typeof TaskCreateLazyImport
+    '/tasks/create': {
+      id: '/tasks/create'
+      path: '/tasks/create'
+      fullPath: '/tasks/create'
+      preLoaderRoute: typeof TasksCreateLazyImport
       parentRoute: typeof rootRoute
     }
-    '/task/edit/$taskId': {
-      id: '/task/edit/$taskId'
-      path: '/task/edit/$taskId'
-      fullPath: '/task/edit/$taskId'
-      preLoaderRoute: typeof TaskEditTaskIdLazyImport
+    '/tasks/edit/$taskId': {
+      id: '/tasks/edit/$taskId'
+      path: '/tasks/edit/$taskId'
+      fullPath: '/tasks/edit/$taskId'
+      preLoaderRoute: typeof TasksEditTaskIdLazyImport
       parentRoute: typeof rootRoute
     }
   }
@@ -74,42 +74,42 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/task/create': typeof TaskCreateLazyRoute
-  '/task/edit/$taskId': typeof TaskEditTaskIdLazyRoute
+  '/tasks/create': typeof TasksCreateLazyRoute
+  '/tasks/edit/$taskId': typeof TasksEditTaskIdLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/task/create': typeof TaskCreateLazyRoute
-  '/task/edit/$taskId': typeof TaskEditTaskIdLazyRoute
+  '/tasks/create': typeof TasksCreateLazyRoute
+  '/tasks/edit/$taskId': typeof TasksEditTaskIdLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/task/create': typeof TaskCreateLazyRoute
-  '/task/edit/$taskId': typeof TaskEditTaskIdLazyRoute
+  '/tasks/create': typeof TasksCreateLazyRoute
+  '/tasks/edit/$taskId': typeof TasksEditTaskIdLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/task/create' | '/task/edit/$taskId'
+  fullPaths: '/' | '/tasks/create' | '/tasks/edit/$taskId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/task/create' | '/task/edit/$taskId'
-  id: '__root__' | '/' | '/task/create' | '/task/edit/$taskId'
+  to: '/' | '/tasks/create' | '/tasks/edit/$taskId'
+  id: '__root__' | '/' | '/tasks/create' | '/tasks/edit/$taskId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  TaskCreateLazyRoute: typeof TaskCreateLazyRoute
-  TaskEditTaskIdLazyRoute: typeof TaskEditTaskIdLazyRoute
+  TasksCreateLazyRoute: typeof TasksCreateLazyRoute
+  TasksEditTaskIdLazyRoute: typeof TasksEditTaskIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  TaskCreateLazyRoute: TaskCreateLazyRoute,
-  TaskEditTaskIdLazyRoute: TaskEditTaskIdLazyRoute,
+  TasksCreateLazyRoute: TasksCreateLazyRoute,
+  TasksEditTaskIdLazyRoute: TasksEditTaskIdLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -123,18 +123,18 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/task/create",
-        "/task/edit/$taskId"
+        "/tasks/create",
+        "/tasks/edit/$taskId"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/task/create": {
-      "filePath": "task.create.lazy.tsx"
+    "/tasks/create": {
+      "filePath": "tasks/create.lazy.tsx"
     },
-    "/task/edit/$taskId": {
-      "filePath": "task.edit.$taskId.lazy.tsx"
+    "/tasks/edit/$taskId": {
+      "filePath": "tasks/edit.$taskId.lazy.tsx"
     }
   }
 }

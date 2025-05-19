@@ -10,6 +10,7 @@ export default function TaskCard(props: { todo: Todo }) {
 	const [_, setTodo] = useLocalStorage<Todo[]>("todos", []);
 	const [editMode, setEditMode] = useState(false);
 	const [title, setTitle] = useState(props.todo.title);
+	const [titleError, setTitleError] = useState<string | undefined>();
 	const [note, setNote] = useState(props.todo.note);
 	const [debouncedComplete, setComplete] = useDebounceValue(false, 3000);
 
@@ -30,6 +31,9 @@ export default function TaskCard(props: { todo: Todo }) {
 							className="flex"
 							onSubmit={(event) => {
 								event.preventDefault();
+
+								if (titleError !== undefined) return;
+
 								setTodo((prev: Todo[]) => {
 									return prev.map((todo) => {
 										if (todo.id === props.todo.id) {
@@ -50,15 +54,20 @@ export default function TaskCard(props: { todo: Todo }) {
 							</Button>
 							<div className="w-full pr-4">
 								<input
-									className="leading-none font-semibold w-full border-b-1 border-b-gray-300 focus:outline-hidden focus:border-b-gray-500"
+									className={`leading-none font-semibold w-full border-b-1 focus:outline-hidden ${titleError !== undefined ? "border-red-500 focus:border-b-red-600" : "border-b-gray-300 focus:border-b-gray-500"}`}
 									type="text"
 									autoComplete="off"
-									min={0}
 									defaultValue={title}
 									onChange={(event) => {
+										if (event.target.value.length === 0) {
+											setTitleError("Title cannot be empty");
+										} else {
+											setTitleError(undefined);
+										}
 										setTitle(event.target.value);
 									}}
 								/>
+								{titleError !== undefined ? <p className="flex text-red-500 text-sm">{titleError}</p> : <></>}
 								<input
 									className="text-muted-foreground text-sm mt-0.5 focus:outline-hidden"
 									placeholder="Note (Optional)"
