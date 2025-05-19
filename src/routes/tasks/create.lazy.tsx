@@ -57,7 +57,8 @@ function RouteComponent() {
 	const [title, __] = useState(randomTitle());
 	const [createSeries, setCreateSeries] = useState(false);
 	const [siriesColor, setSeriesColor] = useState(DefaultSeriesColor);
-	const [seriesTitle, setSeriesTitle] = useState(randomSeriesTitle());
+	const [defaultSeriesTitle] = useState(randomSeriesTitle());
+	const [seriesTitle, setSeriesTitle] = useState(defaultSeriesTitle);
 
 	const taskForm = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -143,11 +144,11 @@ function RouteComponent() {
 						<p className="mb-2 text-gray-400 font-bold text-xs">SERIES TITLE</p>
 						<Input
 							className="rounded-4xl h-12 px-5"
-							placeholder={seriesTitle}
+							placeholder={defaultSeriesTitle}
 							autoComplete="off"
 							onChange={(event) => {
 								if (event.target.value.length === 0) {
-									setSeriesTitle(seriesTitle);
+									setSeriesTitle(defaultSeriesTitle);
 								} else {
 									setSeriesTitle(event.target.value);
 								}
