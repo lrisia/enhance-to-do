@@ -12,6 +12,7 @@ export default function TaskCard(props: { task: Task }) {
 	const [title, setTitle] = useState(props.task.title);
 	const [titleError, setTitleError] = useState<string | undefined>();
 	const [note, setNote] = useState(props.task.note);
+	const [completeState, setCompleteState] = useState(props.task.isCompleted);
 	const [debouncedComplete, setComplete] = useDebounceValue(false, 3000);
 
 	useEffect(() => {
@@ -106,7 +107,8 @@ export default function TaskCard(props: { task: Task }) {
 					id={`complete-${props.task.id}`}
 					className="w-5 h-5 rounded-full border-black"
 					onClick={() => {
-						setComplete(true);
+						setCompleteState(!completeState);
+						setComplete(!completeState);
 					}}
 				/>
 			</CardContent>
