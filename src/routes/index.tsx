@@ -38,7 +38,17 @@ function App() {
 					<p className="text-2xl">{greeting()}</p>
 					<span className="flex gap-2">
 						<h1 className="text-4xl font-bold">Your</h1>
-						<p className="text-4xl">({todos.length})</p>
+						<p className="text-4xl">
+							(
+							{
+								todos.filter(
+									(todo) =>
+										(todo.type === TodoType.Task && todo.seriesId === undefined) ||
+										todo.type === TodoType.Series,
+								).length
+							}
+							)
+						</p>
 					</span>
 					<h1 className="text-4xl font-bold">TO-DOs</h1>
 				</div>
@@ -67,25 +77,26 @@ function App() {
 					<span>Empty</span>
 				</div>
 			) : (
-				todos.map((todo) => {
-					if (todo.type === TodoType.Task && todo.seriesId === undefined) {
-						return <TaskCard key={todo.id} task={todo} />;
-					} else if (todo.type === TodoType.Series) {
-						return (
-							<Link to="/series/$seriesId" params={{ seriesId: todo.id }}>
-								<SeriesCard
-									key={todo.id}
-									series={todo}
-									tasks={
-										todos.filter(
-											(task) => task.type === TodoType.Task && task.seriesId === todo.id,
-										) as Task[]
-									}
-								/>
-							</Link>
-						);
-					}
-				})
+				todos
+					.filter((todo) => todo.isCompleted === false)
+					.map((todo) => {
+						if (todo.type === TodoType.Task && todo.seriesId === undefined) {
+							return <TaskCard key={todo.id} task={todo} />;
+						} else if (todo.type === TodoType.Series) {
+							return (
+								<Link key={todo.id} to="/series/$seriesId" params={{ seriesId: todo.id }}>
+									<SeriesCard
+										series={todo}
+										tasks={
+											todos.filter(
+												(task) => task.type === TodoType.Task && task.seriesId === todo.id,
+											) as Task[]
+										}
+									/>
+								</Link>
+							);
+						}
+					})
 			)}
 		</>
 	);
