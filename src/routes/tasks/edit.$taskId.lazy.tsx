@@ -38,7 +38,6 @@ function RouteComponent() {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			title: todo.title,
-			note: todo.note ?? "",
 		},
 	});
 

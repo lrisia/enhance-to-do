@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { Todo } from "@/entities/todo";
+import type { Task, Todo } from "@/entities/todo";
 import { Check, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDebounceValue, useLocalStorage } from "usehooks-ts";
 
-export default function TaskCard(props: { todo: Todo }) {
+export default function TaskCard(props: { todo: Task }) {
 	const [_, setTodo] = useLocalStorage<Todo[]>("todos", []);
 	const [editMode, setEditMode] = useState(false);
 	const [title, setTitle] = useState(props.todo.title);

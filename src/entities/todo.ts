@@ -14,15 +14,14 @@ export type Task = {
   note?: string;
   isCompleted: boolean;
   createdAt: Date;
+  seriesId?: string;
 };
 
 export type Series = {
   id: string;
   type: TodoType.Series;
   title: string;
-  note?: string;
   color: SeriesColor
-  tasks: Task[];
   isCompleted: boolean;
   createdAt: Date;
 };
