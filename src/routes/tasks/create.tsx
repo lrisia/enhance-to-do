@@ -1,4 +1,5 @@
 import PreviewSeriesCard from "@/components/PreviewSeriesCard";
+import SeriesCard from "@/components/SeriesCard";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -9,18 +10,24 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { type Todo, TodoType } from "@/entities/todo";
+import { type Series, type Task, type Todo, TodoType } from "@/entities/todo";
 import { DefaultSeriesColor, SeriesColor } from "@/lib/constant";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { CirclePlus, CircleX } from "lucide-react";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
+import { uuidv7 } from "uuidv7";
 import { z } from "zod";
 
-export const Route = createLazyFileRoute("/tasks/create")({
+const searchParamSchema = z.object({
+	seriesId: z.optional(z.string()),
+});
+
+export const Route = createFileRoute("/tasks/create")({
 	component: RouteComponent,
+	validateSearch: searchParamSchema,
 });
 
 const formSchema = z.object({
@@ -50,11 +57,15 @@ function randomSeriesTitle(): string {
 }
 
 function RouteComponent() {
-	const [_, setValue] = useLocalStorage<Todo[]>("todos", []);
-	const taskId = useId();
-	const seriesId = useId();
+	const search = Route.useSearch();
+
+	const [todos, setTodo] = useLocalStorage<Todo[]>("todos", []);
+	const taskId = uuidv7();
+	let seriesId = uuidv7();
+
 	const navigate = useNavigate();
-	const [title, __] = useState(randomTitle());
+	const [title] = useState(randomTitle());
+	const [selectedSeries, setSelectedSeries] = useState<string | undefined>(search.seriesId);
 	const [createSeries, setCreateSeries] = useState(false);
 	const [siriesColor, setSeriesColor] = useState(DefaultSeriesColor);
 	const [defaultSeriesTitle] = useState(randomSeriesTitle());
@@ -69,9 +80,11 @@ function RouteComponent() {
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		if (createSeries === true) {
+		if (selectedSeries !== undefined) {
+			seriesId = selectedSeries;
+		} else if (createSeries === true) {
 			// Create series
-			setValue((prev: Todo[]) => {
+			setTodo((prev: Todo[]) => {
 				return [
 					...prev,
 					{
@@ -86,7 +99,7 @@ function RouteComponent() {
 			});
 		}
 
-		setValue((prev: Todo[]) => {
+		setTodo((prev: Todo[]) => {
 			return [
 				...prev,
 				{
@@ -96,7 +109,7 @@ function RouteComponent() {
 					note: values.note === "" ? undefined : values.note,
 					isCompleted: false,
 					createdAt: new Date(),
-					seriesId: createSeries ? seriesId : undefined,
+					seriesId: createSeries || selectedSeries ? seriesId : undefined,
 				},
 			];
 		});
@@ -112,10 +125,11 @@ function RouteComponent() {
 			</Link>
 			<h1 className="text-4xl font-bold my-2">NEW TASK</h1>
 			<p className="mb-2 mt-6 text-gray-400 font-bold">SERIES</p>
-			<div>
+			<div className="flex gap-2">
 				<button
 					type="button"
 					onClick={() => {
+						setSelectedSeries(undefined);
 						setCreateSeries(!createSeries);
 						setSeriesColor(DefaultSeriesColor);
 					}}
@@ -126,38 +140,71 @@ function RouteComponent() {
 						className={`transition-transform ${createSeries ? "rotate-z-45" : ""}`}
 					/>
 				</button>
-				{createSeries && (
-					<>
-						<p className="mb-2 text-gray-400 font-bold text-xs">COLOR</p>
-						<div className="flex bg-gray-100 rounded-full p-2 w-min gap-2 mb-4">
-							{Object.entries(SeriesColor).map(([color, code]) => (
+				<div className="flex overflow-scroll text-nowrap gap-2 no-scrollbar mask-r-from-90%">
+					{todos
+						.filter((todo) => todo.type === TodoType.Series)
+						.map((series) => (
+							<button
+								key={series.id}
+								type="button"
+								onClick={() => {
+									setSelectedSeries(series.id);
+									setCreateSeries(false);
+								}}
+							>
 								<div
-									key={color}
-									style={{ backgroundColor: code }}
-									className={`rounded-full w-8 h-8 cursor-pointer transition-transform hover:scale-110 ${siriesColor === code ? "ring-2 ring-gray-400" : ""}`}
-									onClick={() => {
-										setSeriesColor(code);
+									style={{
+										background: `radial-gradient(circle at center, ${series.color}33 0%, ${series.color} 100%)`,
 									}}
-								/>
-							))}
-						</div>
-						<p className="mb-2 text-gray-400 font-bold text-xs">SERIES TITLE</p>
-						<Input
-							className="rounded-4xl h-12 px-5"
-							placeholder={defaultSeriesTitle}
-							autoComplete="off"
-							onChange={(event) => {
-								if (event.target.value.length === 0) {
-									setSeriesTitle(defaultSeriesTitle);
-								} else {
-									setSeriesTitle(event.target.value);
-								}
-							}}
-						/>
-						<PreviewSeriesCard color={siriesColor} title={seriesTitle} />
-					</>
-				)}
+									className="relative rounded-full p-2 justify-items-center"
+								>
+									<p className="font-bold">{series.title}</p>
+								</div>
+							</button>
+						))}
+				</div>
 			</div>
+			{createSeries && (
+				<>
+					<p className="mt-2 mb-2 text-gray-400 font-bold text-xs">COLOR</p>
+					<div className="flex bg-gray-100 rounded-full p-2 w-min gap-2 mb-4">
+						{Object.entries(SeriesColor).map(([color, code]) => (
+							<div
+								key={color}
+								style={{ backgroundColor: code }}
+								className={`rounded-full w-8 h-8 cursor-pointer transition-transform hover:scale-110 ${siriesColor === code ? "ring-2 ring-gray-400" : ""}`}
+								onClick={() => {
+									setSeriesColor(code);
+								}}
+							/>
+						))}
+					</div>
+					<p className="mb-2 text-gray-400 font-bold text-xs">SERIES TITLE</p>
+					<Input
+						className="rounded-4xl h-12 px-5"
+						placeholder={defaultSeriesTitle}
+						autoComplete="off"
+						onChange={(event) => {
+							if (event.target.value.length === 0) {
+								setSeriesTitle(defaultSeriesTitle);
+							} else {
+								setSeriesTitle(event.target.value);
+							}
+						}}
+					/>
+					<PreviewSeriesCard color={siriesColor} title={seriesTitle} />
+				</>
+			)}
+			{selectedSeries && (
+				<SeriesCard
+					series={todos.find((todo) => todo.id === selectedSeries) as Series}
+					tasks={
+						todos.filter(
+							(todo) => todo.type === TodoType.Task && todo.seriesId === selectedSeries,
+						) as Task[]
+					}
+				/>
+			)}
 			<p className="mb-2 mt-6 text-gray-400 font-bold">TASK</p>
 			<Form {...taskForm}>
 				<form onSubmit={taskForm.handleSubmit(onSubmit)} className="space-y-8 mx-2 mt-6">
