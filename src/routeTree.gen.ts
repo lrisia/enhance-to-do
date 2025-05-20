@@ -14,10 +14,10 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as TasksCreateImport } from './routes/tasks/create'
 
 // Create Virtual Routes
 
-const TasksCreateLazyImport = createFileRoute('/tasks/create')()
 const SeriesSeriesIdLazyImport = createFileRoute('/series/$seriesId')()
 const TasksEditTaskIdLazyImport = createFileRoute('/tasks/edit/$taskId')()
 
@@ -29,12 +29,6 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const TasksCreateLazyRoute = TasksCreateLazyImport.update({
-  id: '/tasks/create',
-  path: '/tasks/create',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/tasks/create.lazy').then((d) => d.Route))
-
 const SeriesSeriesIdLazyRoute = SeriesSeriesIdLazyImport.update({
   id: '/series/$seriesId',
   path: '/series/$seriesId',
@@ -42,6 +36,12 @@ const SeriesSeriesIdLazyRoute = SeriesSeriesIdLazyImport.update({
 } as any).lazy(() =>
   import('./routes/series/$seriesId.lazy').then((d) => d.Route),
 )
+
+const TasksCreateRoute = TasksCreateImport.update({
+  id: '/tasks/create',
+  path: '/tasks/create',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const TasksEditTaskIdLazyRoute = TasksEditTaskIdLazyImport.update({
   id: '/tasks/edit/$taskId',
@@ -62,18 +62,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/tasks/create': {
+      id: '/tasks/create'
+      path: '/tasks/create'
+      fullPath: '/tasks/create'
+      preLoaderRoute: typeof TasksCreateImport
+      parentRoute: typeof rootRoute
+    }
     '/series/$seriesId': {
       id: '/series/$seriesId'
       path: '/series/$seriesId'
       fullPath: '/series/$seriesId'
       preLoaderRoute: typeof SeriesSeriesIdLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/tasks/create': {
-      id: '/tasks/create'
-      path: '/tasks/create'
-      fullPath: '/tasks/create'
-      preLoaderRoute: typeof TasksCreateLazyImport
       parentRoute: typeof rootRoute
     }
     '/tasks/edit/$taskId': {
@@ -90,51 +90,51 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/tasks/create': typeof TasksCreateRoute
   '/series/$seriesId': typeof SeriesSeriesIdLazyRoute
-  '/tasks/create': typeof TasksCreateLazyRoute
   '/tasks/edit/$taskId': typeof TasksEditTaskIdLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/tasks/create': typeof TasksCreateRoute
   '/series/$seriesId': typeof SeriesSeriesIdLazyRoute
-  '/tasks/create': typeof TasksCreateLazyRoute
   '/tasks/edit/$taskId': typeof TasksEditTaskIdLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/tasks/create': typeof TasksCreateRoute
   '/series/$seriesId': typeof SeriesSeriesIdLazyRoute
-  '/tasks/create': typeof TasksCreateLazyRoute
   '/tasks/edit/$taskId': typeof TasksEditTaskIdLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/series/$seriesId' | '/tasks/create' | '/tasks/edit/$taskId'
+  fullPaths: '/' | '/tasks/create' | '/series/$seriesId' | '/tasks/edit/$taskId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/series/$seriesId' | '/tasks/create' | '/tasks/edit/$taskId'
+  to: '/' | '/tasks/create' | '/series/$seriesId' | '/tasks/edit/$taskId'
   id:
     | '__root__'
     | '/'
-    | '/series/$seriesId'
     | '/tasks/create'
+    | '/series/$seriesId'
     | '/tasks/edit/$taskId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  TasksCreateRoute: typeof TasksCreateRoute
   SeriesSeriesIdLazyRoute: typeof SeriesSeriesIdLazyRoute
-  TasksCreateLazyRoute: typeof TasksCreateLazyRoute
   TasksEditTaskIdLazyRoute: typeof TasksEditTaskIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  TasksCreateRoute: TasksCreateRoute,
   SeriesSeriesIdLazyRoute: SeriesSeriesIdLazyRoute,
-  TasksCreateLazyRoute: TasksCreateLazyRoute,
   TasksEditTaskIdLazyRoute: TasksEditTaskIdLazyRoute,
 }
 
@@ -149,19 +149,19 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/series/$seriesId",
         "/tasks/create",
+        "/series/$seriesId",
         "/tasks/edit/$taskId"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/tasks/create": {
+      "filePath": "tasks/create.tsx"
+    },
     "/series/$seriesId": {
       "filePath": "series/$seriesId.lazy.tsx"
-    },
-    "/tasks/create": {
-      "filePath": "tasks/create.lazy.tsx"
     },
     "/tasks/edit/$taskId": {
       "filePath": "tasks/edit.$taskId.lazy.tsx"

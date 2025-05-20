@@ -48,13 +48,14 @@ function RouteComponent() {
 			</div>
 			<SeriesCard series={series} tasks={tasks} />
 			<div className="relative -top-10 flex justify-center -mb-7">
-				<button
-					type="button"
+				<Link
+					to="/tasks/create"
+					search={{ seriesId }}
 					className="rounded-full p-2"
 					style={{ backgroundColor: `${series.color}cc` }}
 				>
 					<CirclePlus strokeWidth={2} size={50} color="white" />
-				</button>
+				</Link>
 			</div>
 			<p className="mb-2 text-gray-400 font-bold">SERIES</p>
 			{tasks.length === 0 ? (
