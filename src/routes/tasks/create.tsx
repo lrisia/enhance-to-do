@@ -58,12 +58,12 @@ function randomSeriesTitle(): string {
 
 function RouteComponent() {
 	const search = Route.useSearch();
+	const navigate = useNavigate();
 
 	const [todos, setTodo] = useLocalStorage<Todo[]>("todos", []);
 	const taskId = uuidv7();
 	let seriesId = uuidv7();
 
-	const navigate = useNavigate();
 	const [title] = useState(randomTitle());
 	const [selectedSeries, setSelectedSeries] = useState<string | undefined>(search.seriesId);
 	const [createSeries, setCreateSeries] = useState(false);
@@ -140,7 +140,7 @@ function RouteComponent() {
 						className={`transition-transform ${createSeries ? "rotate-z-45" : ""}`}
 					/>
 				</button>
-				<div className="flex overflow-scroll text-nowrap gap-2 no-scrollbar mask-r-from-90%">
+				<div className="flex overflow-scroll text-nowrap gap-2 no-scrollbar mask-r-from-90% w-full">
 					{todos
 						.filter((todo) => todo.type === TodoType.Series)
 						.map((series) => (
