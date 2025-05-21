@@ -55,8 +55,8 @@ function App() {
 				<div>
 					<p className="text-2xl">
 						<span className="relative text-3xl">{weatherEmoji.emoji}</span> {greeting()}
-						<span className="text-sm font-light text-gray-700"> with {weatherEmoji.name}</span>
 					</p>
+					<p className="text-sm font-light text-gray-700"> with {weatherEmoji.name}</p>
 					<span className="flex gap-2">
 						<h1 className="text-4xl font-bold">Your</h1>
 						<p className="text-4xl">
