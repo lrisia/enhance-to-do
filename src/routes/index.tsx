@@ -10,24 +10,16 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { type Task, type Todo, TodoType } from "@/entities/todo";
+import type { Weather, WeatherEmojiData } from "@/entities/weather";
+import { greeting, mapWeatherCodeToEmoji } from "@/lib/utils";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowUpDown, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 export const Route = createFileRoute("/")({
 	component: App,
 });
-
-function greeting(): string {
-	const currentHour = new Date().getHours();
-
-	if (currentHour >= 0 && currentHour < 12) {
-		return "Good morning";
-	} else if (currentHour >= 12 && currentHour < 18) {
-		return "Good afternoon";
-	}
-	return "Good evening";
-}
 
 function App() {
 	const [todos] = useLocalStorage<Todo[]>("todos", []);
@@ -36,11 +28,35 @@ function App() {
 			todo.type === TodoType.Task && todo.seriesId === undefined && todo.isCompleted === true,
 	);
 
+	const [weatherEmoji, setWeatherEmoji] = useState<WeatherEmojiData>({
+		name: "",
+		emoji: "⏳",
+	});
+
+	useEffect(() => {
+		const fetchWeather = async () => {
+			const response = await fetch(
+				"https://api.open-meteo.com/v1/forecast?latitude=15.5&longitude=101&current=temperature_2m,weather_code&timezone=Asia/Bangkok&forecast_days=1",
+			);
+			const data = (await response.json()) as Weather;
+			return data;
+		};
+
+		fetchWeather().then((data) => {
+			const weatherCode = data.current.weather_code;
+			const weatherEmoji = mapWeatherCodeToEmoji(weatherCode);
+			setWeatherEmoji(weatherEmoji);
+		});
+	});
+
 	return (
 		<>
 			<div className="mb-8 flex w-full justify-between">
 				<div>
-					<p className="text-2xl">{greeting()}</p>
+					<p className="text-2xl">
+						<span className="relative text-3xl">{weatherEmoji.emoji}</span> {greeting()}
+						<span className="text-sm font-light text-gray-700"> with {weatherEmoji.name}</span>
+					</p>
 					<span className="flex gap-2">
 						<h1 className="text-4xl font-bold">Your</h1>
 						<p className="text-4xl">

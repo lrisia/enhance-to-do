@@ -113,7 +113,7 @@ function RouteComponent() {
 				},
 			];
 		});
-		
+
 		search.seriesId === undefined
 			? navigate({
 					to: "/",
