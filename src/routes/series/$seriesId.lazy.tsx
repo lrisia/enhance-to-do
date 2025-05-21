@@ -36,6 +36,7 @@ function RouteComponent() {
 	const tasks = todos.filter(
 		(task) => task.type === TodoType.Task && task.seriesId === seriesId,
 	) as Task[];
+	const completedTasks = tasks.filter((task) => task.isCompleted);
 
 	function onDeleteSeries() {
 		const deleteId = [seriesId, ...tasks.map((task) => task.id)];
@@ -89,9 +90,24 @@ function RouteComponent() {
 					<span>Empty</span>
 				</div>
 			) : (
-				tasks.map((task) => {
-					return <TaskCard key={task.id} task={task} />;
-				})
+				tasks
+					.filter((task) => task.isCompleted === false)
+					.map((task) => {
+						return <TaskCard key={task.id} task={task} />;
+					})
+			)}
+			{completedTasks.length !== 0 ? (
+				<>
+					<div className="flex items-center gap-2 mt-6">
+						<p className="text-gray-400 font-bold">COMPLETED</p>
+						<hr className="w-full" />
+					</div>
+					{completedTasks.map((todo) => {
+						return <TaskCard key={`${todo.id}-completed`} task={todo as Task} />;
+					})}
+				</>
+			) : (
+				<></>
 			)}
 		</>
 	);

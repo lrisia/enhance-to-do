@@ -36,7 +36,7 @@ export default function SeriesCard({ series, tasks }: SeriesCardProps) {
 			<div className="absolute bottom-0 left-0 w-full h-1/2 flex flex-col justify-end">
 				{[...Array(15)].map((_, i) => (
 					<div
-						key={_}
+						key={i}
 						className="w-full h-1 mb-[1px]"
 						style={{
 							backgroundColor: series.color,

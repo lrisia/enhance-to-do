@@ -30,6 +30,10 @@ function greeting(): string {
 
 function App() {
 	const [todos] = useLocalStorage<Todo[]>("todos", []);
+	const completed = todos.filter(
+		(todo) =>
+			todo.type === TodoType.Task && todo.seriesId === undefined && todo.isCompleted === true,
+	);
 
 	return (
 		<>
@@ -43,7 +47,9 @@ function App() {
 							{
 								todos.filter(
 									(todo) =>
-										(todo.type === TodoType.Task && todo.seriesId === undefined) ||
+										(todo.type === TodoType.Task &&
+											todo.seriesId === undefined &&
+											todo.isCompleted === false) ||
 										todo.type === TodoType.Series,
 								).length
 							}
@@ -97,6 +103,19 @@ function App() {
 							);
 						}
 					})
+			)}
+			{completed.length !== 0 ? (
+				<>
+					<div className="flex items-center gap-2 mt-6">
+						<p className="text-gray-400 font-bold">COMPLETED</p>
+						<hr className="w-full" />
+					</div>
+					{completed.map((todo) => {
+						return <TaskCard key={`${todo.id}-completed`} task={todo as Task} />;
+					})}
+				</>
+			) : (
+				<></>
 			)}
 		</>
 	);

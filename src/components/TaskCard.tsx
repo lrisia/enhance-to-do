@@ -13,15 +13,23 @@ export default function TaskCard(props: { task: Task }) {
 	const [titleError, setTitleError] = useState<string | undefined>();
 	const [note, setNote] = useState(props.task.note);
 	const [completeState, setCompleteState] = useState(props.task.isCompleted);
-	const [debouncedComplete, setComplete] = useDebounceValue(false, 3000);
+	const [debouncedComplete, setComplete] = useDebounceValue(completeState, 3000);
 
 	useEffect(() => {
-		if (debouncedComplete === true) {
+		if (debouncedComplete !== props.task.isCompleted) {
 			setTodo((prev: Todo[]) => {
-				return prev.filter((todo) => todo.id !== props.task.id);
+				return prev.map((todo) => {
+					if (todo.id === props.task.id) {
+						return {
+							...todo,
+							isCompleted: debouncedComplete,
+						};
+					}
+					return todo;
+				});
 			});
 		}
-	}, [debouncedComplete, setTodo, props.task.id]);
+	}, [debouncedComplete, setTodo, props.task]);
 
 	return (
 		<Card className="my-4">
@@ -105,6 +113,7 @@ export default function TaskCard(props: { task: Task }) {
 				</div>
 				<Checkbox
 					id={`complete-${props.task.id}`}
+					checked={completeState}
 					className="w-5 h-5 rounded-full border-black"
 					onClick={() => {
 						setCompleteState(!completeState);
