@@ -1,6 +1,16 @@
 import SeriesCard from "@/components/SeriesCard";
 import TaskCard from "@/components/TaskCard";
+import { Button } from "@/components/ui/button";
+import {
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { type Series, type Task, type Todo, TodoType } from "@/entities/todo";
+import { Dialog } from "@radix-ui/react-dialog";
 import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { CircleChevronLeft, CirclePlus, Trash2 } from "lucide-react";
 import { useLocalStorage } from "usehooks-ts";
@@ -12,6 +22,7 @@ export const Route = createLazyFileRoute("/series/$seriesId")({
 function RouteComponent() {
 	const { seriesId } = Route.useParams();
 	const navigate = useNavigate();
+
 	if (!seriesId) {
 		throw new Error("seriesId is required");
 	}
@@ -42,9 +53,24 @@ function RouteComponent() {
 				<Link to="/">
 					<CircleChevronLeft strokeWidth={1} size={50} />
 				</Link>
-				<button type="button" className="mr-2" onClick={onDeleteSeries}>
-					<Trash2 strokeWidth={2} size={35} color="#cc0202" />
-				</button>
+				<Dialog>
+					<DialogTrigger asChild>
+						<button type="button" className="mr-2">
+							<Trash2 strokeWidth={2} size={35} color="#cc0202" />
+						</button>
+					</DialogTrigger>
+					<DialogContent className="sm:max-w-[425px]">
+						<DialogHeader>
+							<DialogTitle className="text-red-600">Delete Series ?</DialogTitle>
+							<DialogDescription>This precess cannot be undone.</DialogDescription>
+						</DialogHeader>
+						<DialogFooter className="justify-conter">
+							<Button variant="destructive" onClick={onDeleteSeries}>
+								Delete
+							</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 			</div>
 			<SeriesCard series={series} tasks={tasks} />
 			<div className="relative -top-10 flex justify-center -mb-7">
