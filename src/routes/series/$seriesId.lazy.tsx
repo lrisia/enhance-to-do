@@ -1,3 +1,4 @@
+import CompleteZone from "@/components/CompleteZone";
 import SeriesCard from "@/components/SeriesCard";
 import TaskCard from "@/components/TaskCard";
 import { Button } from "@/components/ui/button";
@@ -84,7 +85,7 @@ function RouteComponent() {
 					<CirclePlus strokeWidth={2} size={50} color="white" />
 				</Link>
 			</div>
-			<p className="mb-2 text-gray-400 font-bold">SERIES</p>
+			<p className="mb-2 text-gray-400 font-bold">To-do</p>
 			{tasks.length === 0 ? (
 				<div className="flex w-full justify-center mt-4 text-gray-500">
 					<span>Empty</span>
@@ -96,19 +97,7 @@ function RouteComponent() {
 						return <TaskCard key={task.id} task={task} />;
 					})
 			)}
-			{completedTasks.length !== 0 ? (
-				<>
-					<div className="flex items-center gap-2 mt-6">
-						<p className="text-gray-400 font-bold">COMPLETED</p>
-						<hr className="w-full" />
-					</div>
-					{completedTasks.map((todo) => {
-						return <TaskCard key={`${todo.id}-completed`} task={todo as Task} />;
-					})}
-				</>
-			) : (
-				<></>
-			)}
+			{completedTasks.length !== 0 ? <CompleteZone completedTask={completedTasks} /> : <></>}
 		</>
 	);
 }

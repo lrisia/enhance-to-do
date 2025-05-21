@@ -113,9 +113,15 @@ function RouteComponent() {
 				},
 			];
 		});
-		navigate({
-			to: "/",
-		});
+		
+		search.seriesId === undefined
+			? navigate({
+					to: "/",
+				})
+			: navigate({
+					to: "/series/$seriesId",
+					params: { seriesId: search.seriesId },
+				});
 	}
 
 	return (

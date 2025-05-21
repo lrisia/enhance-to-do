@@ -1,3 +1,4 @@
+import CompleteZone from "@/components/CompleteZone";
 import SeriesCard from "@/components/SeriesCard";
 import TaskCard from "@/components/TaskCard";
 import { Button } from "@/components/ui/button";
@@ -104,19 +105,7 @@ function App() {
 						}
 					})
 			)}
-			{completed.length !== 0 ? (
-				<>
-					<div className="flex items-center gap-2 mt-6">
-						<p className="text-gray-400 font-bold">COMPLETED</p>
-						<hr className="w-full" />
-					</div>
-					{completed.map((todo) => {
-						return <TaskCard key={`${todo.id}-completed`} task={todo as Task} />;
-					})}
-				</>
-			) : (
-				<></>
-			)}
+			{completed.length !== 0 ? <CompleteZone completedTask={completed as Task[]} /> : <></>}
 		</>
 	);
 }
